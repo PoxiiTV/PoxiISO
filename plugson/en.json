@@ -1,0 +1,32 @@
+{
+  "help": {
+    "_titulo": "What is this?",
+    "_pestanas": "The tabs at the top are PC types: «All» applies to any PC and is the one to use. «BIOS only», «UEFI only»… set a different value just for that boot type. A red dot means that tab has data.",
+    "_guardado": "Changes are saved instantly to the USB (ventoy.json file) and a backup is made when this window opens (ventoy_backup.json). If you are not sure what to change, leave it alone: PoxiISO comes already configured.",
+    "plugson_main": "Here you see your USB's details. In the menu on the left you can customize how the boot menu behaves.",
+    "plugson_control": "General menu settings: language, timeouts, which file types are shown, how they are sorted and how it behaves with Windows 11.",
+    "plugson_theme": "Boot menu look: theme, resolution and fonts. PoxiISO already ships its dark cyan theme; only touch this if you want to add another one. A wrong path can leave the menu without a theme.",
+    "plugson_menu_alias": "Changes the name shown in the menu for each ISO or folder. For example, show \"Win11_24H2_x64.iso\" as \"Windows 11\".",
+    "plugson_menu_tip": "Shows a help text on screen when you select a specific ISO or folder (for example, what that ISO is for).",
+    "plugson_menu_class": "Assigns a type (windows, linux…) to an ISO or folder so the menu shows its icon. Icons depend on the theme.",
+    "plugson_auto_install": "Unattended installs: links a template (for example a Windows autounattend.xml) to an ISO so it installs by itself.",
+    "plugson_persistence": "For Linux systems in \"live\" mode: keeps your changes and files in a .dat file on the USB so they are not lost on shutdown.",
+    "plugson_injection": "Puts an archive (.zip, .7z, .tar.gz…) inside an ISO at boot, without modifying the original ISO. For advanced users.",
+    "plugson_conf_replace": "Replaces an ISO's boot configuration file with your own. This is an advanced setting: only use it if you know what you are doing.",
+    "plugson_password": "Password-protects the menu or specific ISOs. Useful if you lend the USB. Note: it is not encryption, it only blocks booting from the menu.",
+    "plugson_image_list": "Decides which ISOs are shown in the menu: allow mode (only the listed ones) or deny mode (all except the listed ones).",
+    "plugson_auto_memdisk": "Forces certain small images to be fully loaded into memory (memdisk mode). Only for specific cases.",
+    "plugson_dud": "DUD (Driver Update Disk): adds a driver disk when installing Red Hat or SUSE type distributions. This is an advanced setting."
+  },
+  "tabs": {
+    "labels": [
+      "All",
+      "BIOS only",
+      "UEFI only",
+      "UEFI 32-bit only",
+      "ARM64 only",
+      "MIPS only"
+    ],
+    "note": "This tab is not in use: what you see are the default values. At boot, the «All» settings apply. Only change something here if you want a different setting just for this type of PC."
+  }
+}

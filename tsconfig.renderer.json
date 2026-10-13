@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "None", "outDir": "dist/renderer", "rootDir": "src/renderer",
+    "strict": true, "noUnusedLocals": true, "skipLibCheck": true, "lib": ["ES2022", "DOM"], "types": []
+  },
+  "include": ["src/renderer/ui.ts", "src/renderer/isos.ts", "src/renderer/preview.ts", "src/renderer/boot.ts", "src/renderer/downloads.ts", "src/renderer/settings.ts", "src/renderer/app.ts"]
+}

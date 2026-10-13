@@ -1,0 +1,41 @@
+appId: com.poxi.poxiiso
+productName: PoxiISO
+directories:
+  output: release
+files:
+  - dist/**
+  - data/**
+  - package.json
+  - "!**/*.map"
+extraResources:
+  - from: engine/ventoy
+    to: engine/ventoy
+    filter:
+      - "**/*"
+      - "!ventoy/plugson.orig.tar.xz"
+  - from: boot-theme
+    to: boot-theme
+    filter:
+      - ventoy.json
+      - poxi/**
+  - from: build/icon.ico
+    to: poxiiso.ico
+asar: true
+win:
+  icon: build/icon.ico
+  requestedExecutionLevel: requireAdministrator
+  target:
+    - target: nsis-web
+    - target: portable
+nsisWeb:
+  artifactName: PoxiISO-Setup-${version}.${ext}
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+portable:
+  artifactName: PoxiISO-Portable-${version}.${ext}
+  # el lanzador abre la app con ExecWait: si no es admin, Windows no deja abrir una app que pide admin (no arranca)
+  requestExecutionLevel: admin
+publish:
+  provider: github
+  owner: poxiitv
+  repo: PoxiISO

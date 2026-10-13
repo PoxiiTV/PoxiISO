@@ -1,0 +1,95 @@
+{
+  "control": [
+    {
+      "VTOY_MENU_LANGUAGE": "es_ES"
+    }
+  ],
+  "theme": {
+    "file": "/ventoy/theme/poxi/theme.txt",
+    "gfxmode": "1920x1080",
+    "display_mode": "GUI",
+    "ventoy_left": "2%",
+    "ventoy_top": "3%",
+    "ventoy_color": "#22d3ee",
+    "fonts": [
+      "/ventoy/theme/poxi/fonts/Inter-Regular-16.pf2",
+      "/ventoy/theme/poxi/fonts/Inter-Regular-22.pf2",
+      "/ventoy/theme/poxi/fonts/Inter-SemiBold-22.pf2",
+      "/ventoy/theme/poxi/fonts/Inter-Bold-44.pf2"
+    ]
+  },
+  "menu_class": [
+    {
+      "key": "ubuntu",
+      "class": "ubuntu"
+    },
+    {
+      "key": "Ubuntu",
+      "class": "ubuntu"
+    },
+    {
+      "key": "debian",
+      "class": "debian"
+    },
+    {
+      "key": "Debian",
+      "class": "debian"
+    },
+    {
+      "key": "linuxmint",
+      "class": "mint"
+    },
+    {
+      "key": "Mint",
+      "class": "mint"
+    },
+    {
+      "key": "mint",
+      "class": "mint"
+    },
+    {
+      "key": "Fedora",
+      "class": "fedora"
+    },
+    {
+      "key": "fedora",
+      "class": "fedora"
+    },
+    {
+      "key": "kali",
+      "class": "kali"
+    },
+    {
+      "key": "Kali",
+      "class": "kali"
+    },
+    {
+      "key": "archlinux",
+      "class": "arch"
+    },
+    {
+      "key": "ArchLinux",
+      "class": "arch"
+    },
+    {
+      "key": "Arch Linux",
+      "class": "arch"
+    },
+    {
+      "key": "Arch-Linux",
+      "class": "arch"
+    },
+    {
+      "key": "Win",
+      "class": "windows"
+    },
+    {
+      "key": "win",
+      "class": "windows"
+    },
+    {
+      "key": "WIN",
+      "class": "windows"
+    }
+  ]
+}

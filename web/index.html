@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PoxiISO · Un USB para todas tus ISOs</title>
+  <meta name="description" content="PoxiISO convierte un pendrive en un USB de arranque donde solo copias ISOs. En español, bonito y fácil. Basado en Ventoy.">
+  <meta name="theme-color" content="#090c15">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <style>
+    @font-face { font-family: 'Inter'; font-weight: 100 900; font-display: swap; src: url('fonts/inter.woff2') format('woff2-variations'); }
+    :root {
+      --bg: #090c15; --bg2: #0d1220; --accent: #22d3ee; --accent2: #3b82f6; --on-accent: #031a24;
+      --text: #eaf1f8; --muted: #9aa9bd; --line: rgba(255,255,255,.09); --line2: rgba(255,255,255,.16);
+      --card: linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+      --grad: linear-gradient(135deg, #22d3ee, #3b82f6); --ease: cubic-bezier(.23, 1, .32, 1);
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font: 16px/1.6 'Inter', system-ui, 'Segoe UI', sans-serif; color: var(--text);
+      background:
+        radial-gradient(900px 520px at 100% 0%, rgba(34,211,238,.13), transparent 65%),
+        radial-gradient(800px 520px at 0% 40%, rgba(59,130,246,.09), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2)) fixed;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+    .wrap { width: min(1080px, 100% - 40px); margin: 0 auto; }
+    header.top { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(16px); background: rgba(9,12,21,.72); border-bottom: 1px solid var(--line); }
+    header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; color: var(--text); }
+    .brand:hover { text-decoration: none; }
+    .brand img { width: 30px; height: 30px; }
+    .brand em { font-style: normal; color: var(--accent); }
+    nav.links { display: flex; gap: 22px; font-size: 14px; font-weight: 500; }
+    nav.links a { color: var(--muted); }
+    nav.links a:hover { color: var(--text); text-decoration: none; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 28px; border-radius: 14px; font-weight: 600; border: 1px solid transparent; transition: transform .16s ease-out, filter .16s ease-out; }
+    .btn:active { transform: scale(.97); }
+    .btn.primary { background: var(--grad); color: var(--on-accent); box-shadow: 0 10px 30px rgba(34,211,238,.25); }
+    .btn.primary:hover { filter: brightness(1.08); text-decoration: none; }
+    .btn.ghost { background: rgba(255,255,255,.05); color: var(--text); border-color: var(--line2); }
+    .btn.ghost:hover { background: rgba(255,255,255,.1); text-decoration: none; }
+    .hero { padding: 84px 0 56px; text-align: center; }
+    .hero img.logo { width: 96px; height: 96px; margin-bottom: 22px; filter: drop-shadow(0 12px 30px rgba(34,211,238,.35)); }
+    .pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 5px 14px; border-radius: 99px; color: var(--accent); background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.25); margin-bottom: 18px; }
+    h1 { font-size: clamp(36px, 6vw, 62px); line-height: 1.08; letter-spacing: -.03em; font-weight: 800; max-width: 16ch; margin: 0 auto 18px; }
+    h1 span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lead { color: var(--muted); font-size: clamp(17px, 2.2vw, 20px); max-width: 56ch; margin: 0 auto 30px; }
+    .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .note { color: var(--muted); font-size: 13px; margin-top: 14px; }
+    .shot { margin: 52px auto 0; max-width: 940px; border-radius: 18px; border: 1px solid var(--line2); box-shadow: 0 40px 100px rgba(0,0,0,.55), 0 0 0 1px rgba(34,211,238,.08); overflow: hidden; background: #0a0e14; }
+    .shot img { display: block; width: 100%; height: auto; }
+    section { padding: 72px 0; }
+    h2 { font-size: clamp(26px, 4vw, 38px); letter-spacing: -.02em; line-height: 1.15; margin-bottom: 10px; }
+    .sub { color: var(--muted); max-width: 60ch; margin-bottom: 36px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 24px; transition: transform .25s var(--ease), border-color .25s var(--ease); }
+    .card:hover { transform: translateY(-3px); border-color: rgba(34,211,238,.4); }
+    .ico { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--grad); color: var(--on-accent); margin-bottom: 14px; box-shadow: 0 8px 22px rgba(34,211,238,.22); }
+    .ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+    .card h3 { font-size: 18px; margin-bottom: 6px; }
+    .card p { color: var(--muted); font-size: 15px; }
+    .steps { counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .step { position: relative; padding: 24px 22px 22px; border-radius: 18px; border: 1px solid var(--line); background: var(--card); }
+    .step::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 99px; background: var(--grad); color: var(--on-accent); font-weight: 700; margin-bottom: 12px; }
+    .step h3 { font-size: 17px; margin-bottom: 4px; }
+    .step p { color: var(--muted); font-size: 14.5px; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+    .gallery figure { border-radius: 16px; overflow: hidden; border: 1px solid var(--line2); background: #0a0e14; }
+    .gallery img { display: block; width: 100%; height: auto; }
+    .gallery figcaption { padding: 12px 16px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); }
+    .warn { border: 1px solid rgba(251,191,36,.35); background: rgba(251,191,36,.07); border-radius: 14px; padding: 16px 20px; color: #fde68a; margin-top: 22px; }
+    details { border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; background: var(--card); margin-bottom: 10px; }
+    summary { cursor: pointer; font-weight: 600; }
+    details p { color: var(--muted); margin-top: 10px; }
+    footer { border-top: 1px solid var(--line); padding: 36px 0 52px; color: var(--muted); font-size: 14px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    @media (max-width: 640px) { nav.links { display: none; } .hero { padding-top: 56px; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="#"><img src="img/icon.png" alt="" width="30" height="30"><span>Poxi<em>ISO</em></span></a>
+      <nav class="links" aria-label="Principal">
+        <a href="#que-trae">Qué trae</a><a href="#como">Cómo se usa</a><a href="#capturas">Capturas</a><a href="#faq">Preguntas</a>
+        <a href="https://github.com/poxiitv/PoxiISO">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap hero">
+      <img class="logo" src="img/icon.png" alt="Icono de PoxiISO" width="96" height="96">
+      <div class="pill">Gratis · Código abierto · En español</div>
+      <h1>Un USB para <span>todas tus ISOs</span></h1>
+      <p class="lead">Copia tus ISOs a un pendrive y elige cuál arrancar. Sin volver a formatear, sin complicaciones y con un menú que da gusto ver.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/poxiitv/PoxiISO/releases/latest">Descargar PoxiISO</a>
+        <a class="btn ghost" href="#como">Ver cómo funciona</a>
+      </div>
+      <p class="note">Windows 10 y 11 · Instalador de ~1 MB · También hay versión portable</p>
+      <div class="shot"><img src="img/instalar.png" alt="Asistente de instalación de PoxiISO eligiendo un USB" width="1040" height="700"></div>
+    </div>
+
+    <section id="que-trae">
+      <div class="wrap">
+        <h2>Todo lo que necesitas, en un sitio</h2>
+        <p class="sub">PoxiISO usa el motor de arranque de Ventoy, probado por millones de personas, y le pone por encima una interfaz hecha para que no tengas que pensar.</p>
+        <div class="grid">
+          <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div><h3>Instalación en 3 pasos</h3><p>Elige el USB, confirma y listo. Si ya lo tenías, <b>actualiza sin perder tus ISOs</b>.</p></article>
+          <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4l4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div><h3>Arrastra y suelta</h3><p>Varias ISOs a la vez, con progreso y botón de cancelar. Nunca deja archivos a medias ni pisa los que ya tienes.</p></article>
+          <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2.5"/></svg></div><h3>Descargas integradas</h3><p>Windows 11 LTSC Poxi, Windows 10 y 11, y Linux en <i>Avanzado</i>. Con <b>verificación de integridad</b> y reanudación.</p></article>
+          <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div><h3>Menú oscuro y en español</h3><p>Un menú de arranque moderno y legible, con un icono para cada sistema y el estilo de la familia Poxi.</p></article>
+          <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></svg></div><h3>Ajustes explicados</h3><p>El configurador avanzado del menú, entero en español y con una explicación en cada pantalla.</p></article>
+          <article class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Seguro por diseño</h3><p>Solo escribe en USBs con PoxiISO, nunca en tu disco duro. Confirmación antes de borrar.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="como">
+      <div class="wrap">
+        <h2>Cómo se usa</h2>
+        <p class="sub">Cuatro pasos. La primera vez tarda un par de minutos; después solo arrastras ISOs.</p>
+        <div class="steps">
+          <div class="step"><h3>Descarga</h3><p>Baja el instalador pequeño (o el portable) desde la página de descargas.</p></div>
+          <div class="step"><h3>Prepara el USB</h3><p>Elígelo y mantén pulsado <b>Instalar</b> para confirmar el borrado.</p></div>
+          <div class="step"><h3>Añade ISOs</h3><p>Arrástralas a la pestaña <b>ISOs</b> o descárgalas desde <b>Descargar</b>.</p></div>
+          <div class="step"><h3>Arranca</h3><p>Inicia el equipo desde el USB y elige qué instalar o probar.</p></div>
+        </div>
+        <div class="warn"><b>Ojo:</b> instalar borra todo el contenido del USB. Actualizar no toca tus archivos.</div>
+      </div>
+    </section>
+
+    <section id="capturas">
+      <div class="wrap">
+        <h2>Así se ve</h2>
+        <p class="sub">Capturas reales de la aplicación y del menú de arranque (con datos de ejemplo).</p>
+        <div class="gallery">
+          <figure><img loading="lazy" src="img/isos.png" alt="Gestor de ISOs con zona para soltar archivos" width="1040" height="700"><figcaption>Gestor de ISOs: arrastra, mira lo que hay y borra.</figcaption></figure>
+          <figure><img loading="lazy" src="img/descargar.png" alt="Catálogo de descargas con Windows y Linux" width="1040" height="700"><figcaption>Descargas con Windows primero y Linux en Avanzado.</figcaption></figure>
+          <figure><img loading="lazy" src="img/arranque.png" alt="Menú de arranque oscuro de PoxiISO" width="1920" height="1080"><figcaption>El menú de arranque, oscuro y en español.</figcaption></figure>
+          <figure><img loading="lazy" src="img/menu-avanzado.png" alt="Configurador avanzado del menú en español" width="1264" height="735"><figcaption>Configuración avanzada del menú, explicada.</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>Preguntas frecuentes</h2>
+        <p class="sub"></p>
+        <details><summary>¿Qué relación tiene con Ventoy?</summary><p>PoxiISO está basado en <a href="https://www.ventoy.net">Ventoy</a> (GPLv3). El motor de arranque es el original, sin modificar. Lo que cambia es la interfaz, el tema del menú, las descargas y las traducciones. Todo el mérito del motor es del proyecto original.</p></details>
+        <details><summary>Windows me avisa al abrir el instalador pequeño</summary><p>El instalador no está firmado digitalmente (los certificados cuestan dinero), y los instaladores diminutos que descargan el resto se parecen a los de algunos virus, así que SmartScreen desconfía. Si quieres evitarlo, usa la versión portable. El código es abierto y puedes revisarlo.</p></details>
+        <details><summary>¿Se borran mis ISOs al actualizar?</summary><p>No. <b>Actualizar</b> solo cambia el sistema de arranque; tus archivos se conservan. <b>Instalar</b> sí borra todo el USB.</p></details>
+        <details><summary>¿Funciona con Secure Boot?</summary><p>Sí: viene activado por defecto y se puede cambiar en las opciones avanzadas del instalador.</p></details>
+        <details><summary>¿Y si Google Drive dice "cuota excedida" al descargar Windows?</summary><p>Pasa a veces con archivos grandes. Prueba más tarde, o usa la página oficial de Microsoft desde el botón <i>Windows 11 (oficial)</i>.</p></details>
+        <details><summary>¿Cuesta algo?</summary><p>No, es gratis y de código abierto. Este proyecto no recibe donaciones; si te gusta el motor, apoya a <a href="https://www.ventoy.net">Ventoy</a>.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>Hecho con 💙 por Poxi · Basado en Ventoy · Licencia GPLv3</span>
+      <span><a href="https://github.com/poxiitv/PoxiISO">GitHub</a> · <a href="https://github.com/poxiitv/PoxiISO/releases/latest">Descargas</a> · <a href="https://github.com/poxiitv/PoxiISO/blob/main/CHANGELOG.md">Novedades</a></span>
+    </div>
+  </footer>
+</body>
+</html>
