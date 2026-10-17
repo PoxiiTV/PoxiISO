@@ -5,7 +5,7 @@
 <br />
 
 ![Versión](https://img.shields.io/badge/versión-1.0.0-22d3ee?style=flat-square&labelColor=0a1218)
-![Plataforma](https://img.shields.io/badge/Windows-10%20%7C%2011-3b82f6?style=flat-square&labelColor=0a1218)
+![Plataforma](https://img.shields.io/badge/Windows%2010%20%7C%2011%20·%20macOS%2013%2B-3b82f6?style=flat-square&labelColor=0a1218)
 ![Motor](https://img.shields.io/badge/motor-Ventoy%201.1.18-34d399?style=flat-square&labelColor=0a1218)
 ![Arranque](https://img.shields.io/badge/UEFI%20·%20BIOS-Secure%20Boot-fbbf24?style=flat-square&labelColor=0a1218)
 ![Idioma](https://img.shields.io/badge/idioma-castellano-a78bfa?style=flat-square&labelColor=0a1218)
@@ -58,11 +58,17 @@ descargas, el menú de arranque y el configurador avanzado, todo en castellano y
 |---|---|
 | **[`PoxiISO-Setup-1.0.0.exe`](https://github.com/PoxiiTV/PoxiISO/releases/download/v1.0.0/PoxiISO-Setup-1.0.0.exe)** | **Instalador** (0,7 MB): baja el resto y crea los accesos |
 | [`PoxiISO-Portable-1.0.0.exe`](https://github.com/PoxiiTV/PoxiISO/releases/download/v1.0.0/PoxiISO-Portable-1.0.0.exe) | **Portable**: se abre tal cual, sin instalar nada |
+| **[`PoxiISO-1.0.0-mac-arm64.dmg`](https://github.com/PoxiiTV/PoxiISO/releases/download/v1.0.0/PoxiISO-1.0.0-mac-arm64.dmg)** | **Mac con Apple Silicon** (M1 o posterior), macOS 13+ · *beta* |
+| [`PoxiISO-1.0.0-mac-x64.dmg`](https://github.com/PoxiiTV/PoxiISO/releases/download/v1.0.0/PoxiISO-1.0.0-mac-x64.dmg) | **Mac con Intel**, macOS 13+ · *beta* |
 
 Todas las versiones y sus novedades, en [**Releases**](https://github.com/PoxiiTV/PoxiISO/releases).
 
 > ℹ️ Como el `.exe` aún no está firmado, Windows puede enseñar el aviso azul de SmartScreen:
 > **Más información → Ejecutar de todas formas.** Pide **administrador** porque tiene que preparar el USB.
+
+> 🍎 Como la app aún no está firmada por Apple, macOS la bloquea la primera vez. Ábrela, cierra el aviso y ve a
+> **Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente**. Al instalar en el USB te pide la **contraseña
+> del Mac**, porque tiene que escribir en el disco.
 
 ---
 
@@ -93,12 +99,17 @@ Todas las versiones y sus novedades, en [**Releases**](https://github.com/PoxiiT
 - 🧹 **Instalar borra todo el USB.** Actualizar no. Usa un pendrive sin nada importante.
 - 🪟 Google Drive a veces corta las descargas grandes con «cuota excedida»: espera un rato o usa la página oficial de Microsoft.
 - 🔒 PoxiISO no incluye ninguna ISO: solo enlaza a los servidores oficiales y a las ISOs de Poxi.
+- 🍎 **La versión de Mac es beta**: el instalador está probado con discos virtuales y arrancando en una máquina virtual
+  (UEFI y BIOS), pero **todavía no con un USB real**. Si algo falla, cuéntalo en *Issues*.
+- 🍎 En Mac el USB se prepara para **arrancar PCs**: un Mac con Apple Silicon no arranca ISOs de PC. En Mac no hay
+  NTFS (exFAT o FAT32) ni configurador avanzado, que solo existe para Windows. **Expulsa el USB** antes de desenchufarlo.
 
 ---
 
 ## 🔧 Compilar
 
-Requiere Node 20+, Python 3 y Windows.
+Requiere Node 20+, Python 3 y Windows. La versión de Mac se compila desde la rama `mac` (Node 20+, sin Python; los
+detalles, en su `docs/MAC.md`).
 
 ```bat
 start.bat          :: compila y abre PoxiISO en modo desarrollo (desde una terminal de administrador para instalar)
@@ -154,9 +165,14 @@ boot menu and advanced configurator, in Spanish (English available) and in the P
 |---|---|
 | **[`PoxiISO-Setup-1.0.0.exe`](https://github.com/PoxiiTV/PoxiISO/releases/download/v1.0.0/PoxiISO-Setup-1.0.0.exe)** | **Installer** (0.7 MB): downloads the rest and creates the shortcuts |
 | [`PoxiISO-Portable-1.0.0.exe`](https://github.com/PoxiiTV/PoxiISO/releases/download/v1.0.0/PoxiISO-Portable-1.0.0.exe) | **Portable**: runs as is, nothing to install |
+| **[`PoxiISO-1.0.0-mac-arm64.dmg`](https://github.com/PoxiiTV/PoxiISO/releases/download/v1.0.0/PoxiISO-1.0.0-mac-arm64.dmg)** | **Apple Silicon Mac** (M1 or later), macOS 13+ · *beta* |
+| [`PoxiISO-1.0.0-mac-x64.dmg`](https://github.com/PoxiiTV/PoxiISO/releases/download/v1.0.0/PoxiISO-1.0.0-mac-x64.dmg) | **Intel Mac**, macOS 13+ · *beta* |
 
 > ℹ️ The `.exe` is not signed yet, so Windows may show the blue SmartScreen warning:
 > **More info → Run anyway.** It asks for **administrator** rights because it has to prepare the USB.
+
+> 🍎 The app is not signed by Apple yet, so macOS blocks it the first time. Open it, close the warning and go to
+> **System Settings → Privacy & Security → Open Anyway**. Installing to the USB asks for your **Mac password**.
 
 ## 🌟 What makes it different
 
@@ -174,10 +190,13 @@ boot menu and advanced configurator, in Spanish (English available) and in the P
 
 - 🧹 **Install erases the whole USB.** Update does not.
 - 🔒 PoxiISO ships no ISO files: it only links to official servers and Poxi's own ISOs.
+- 🍎 **The Mac version is a beta**: tested with virtual disks and booting in a virtual machine (UEFI and BIOS), **not
+  yet with a real USB**. The USB is for booting PCs (Apple Silicon Macs can't boot PC ISOs); no NTFS and no advanced
+  configurator on Mac. **Eject the USB** before unplugging it.
 
 ## 🔧 Building
 
-Node 20+, Python 3 and Windows. `npm run engine` downloads Ventoy and builds the configurator, `npm test` runs the
+Node 20+, Python 3 and Windows (the Mac version builds from the `mac` branch, see its `docs/MAC.md`). `npm run engine` downloads Ventoy and builds the configurator, `npm test` runs the
 tests (temporary folders only) and `npm run dist` creates the installer and the portable build in `release\`.
 
 ## 📜 License
