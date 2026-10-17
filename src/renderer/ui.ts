@@ -67,8 +67,11 @@ function h<K extends keyof HTMLElementTagNameMap>(
   return el
 }
 
+/** Nombre visible de la clave de volumen: "E:" en Windows, "PoxiISO" (último tramo de /Volumes/PoxiISO) en macOS. */
+const volName = (key: string | null) => (key && key.length === 1 ? `${key}:` : (key ?? '').split('/').pop() ?? '')
+
 /** "PoxiISO (E:)" si la unidad tiene nombre; si no, "Unidad E:". */
-const volText = (d: UsbDisk) => d.letters.map((l, i) => (d.labels?.[i] ? `${d.labels[i]} (${l}:)` : t('usb.letters', { letters: `${l}:` }))).join(' · ')
+const volText = (d: UsbDisk) => d.letters.map((l, i) => (d.labels?.[i] ? `${d.labels[i]} (${volName(l)})` : t('usb.letters', { letters: volName(l) }))).join(' · ')
 
 const errText = (code: string) => (t(`err.${code}`) === `err.${code}` ? t('err.generic') : t(`err.${code}`))
 

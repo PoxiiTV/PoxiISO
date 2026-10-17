@@ -1,7 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
 import { join, resolve, sep } from 'node:path'
 import { copyFileSync, mkdirSync, readFileSync, rmSync } from 'node:fs'
-import { fileSystemOf, listUsb, resolveVentoyRoot, waitForDataRoot } from './usb'
+import { fileSystemOf, listUsb, resolveVentoyRoot, volumeKey, waitForDataRoot } from './usb'
 import { copyIsos, deleteIso, freeSpace, isIsoName, listIsos, FAT32_MAX, ISO_EXTS } from './isos'
 import { loadCatalog, normalizeUrl, resolveEntry, REMOTE_CATALOG, type Catalog } from './catalog'
 import { clearParts, downloadFile, partFiles } from './download'
@@ -53,7 +53,7 @@ ipcMain.handle('install', async (_e, raw: unknown) => {
     // recién montada, la unidad a veces aún no deja escribir: un segundo intento tras 3 s
     const themeOk = theme() || (await new Promise(r => setTimeout(r, 3000)), theme())
     if (root) await brandDrive(root, iconPath)
-    return { ok: true, theme: themeOk, letter: root ? root[0] : null }
+    return { ok: true, theme: themeOk, letter: root ? volumeKey(root) : null }
   } catch (e) {
     const m = (e as Error).message
     return { ok: false, code: ['TIMEOUT', 'BAD_INPUT', 'NOT_ALLOWED'].includes(m) ? m : 'INSTALL_FAILED' }
@@ -180,11 +180,11 @@ ipcMain.handle('plugson:start', async (_e, letter: unknown, lang: unknown) => {
   if (!root) return { ok: false, code: 'NOT_ALLOWED' }
   selectPlugson(engineDir, lang)
   try {
-    await startPlugson(join(engineDir, 'VentoyPlugson.exe'), engineDir, root[0], () => {
+    await startPlugson(join(engineDir, 'VentoyPlugson.exe'), engineDir, volumeKey(root), () => {
       plugsonLetter = null
       if (!win.isDestroyed()) win.webContents.send('plugson:closed')
     })
-    plugsonLetter = root[0]
+    plugsonLetter = volumeKey(root)
     return { ok: true }
   } catch (e) {
     const m = (e as Error).message

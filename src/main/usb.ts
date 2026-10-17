@@ -28,19 +28,36 @@ export function parseDisks(json: string): UsbDisk[] {
   })).sort((a, b) => a.number - b.number) // orden estable: si no, la lista se repinta sin cambios reales
 }
 
-/** Devuelve `X:\` solo si la letra pertenece a un USB que ya tiene PoxiISO. Cualquier otra unidad (C:, discos duros...) es null. */
-export function resolveVentoyRoot(disks: UsbDisk[], letter: string): string | null {
-  if (!/^[A-Za-z]$/.test(letter)) return null
-  const L = letter.toUpperCase()
-  const d = disks.find(x => x.hasVentoy && x.letters.some(l => l.toUpperCase() === L))
-  return d ? `${L}:\\` : null
+type Platform = NodeJS.Platform
+
+/**
+ * El "volumen" de un USB se identifica en toda la app (interfaz incluida) con una clave de texto opaca:
+ * en Windows la letra de unidad (E) y en macOS el punto de montaje (/Volumes/PoxiISO).
+ * Devuelve la raíz de archivos de esa clave, o null si no tiene la forma esperada (nunca rutas sueltas).
+ */
+export function volumeRoot(key: string, platform: Platform = process.platform): string | null {
+  if (platform === 'darwin') return /^\/Volumes\/[^/\0]+$/.test(key) && key !== '/Volumes/..' ? key : null
+  return /^[A-Za-z]$/.test(key) ? `${key.toUpperCase()}:\\` : null
 }
 
-/** Sistema de archivos de la letra en un USB con PoxiISO (exFAT, NTFS, FAT32…), o null si no se sabe. */
-export function fileSystemOf(disks: UsbDisk[], letter: string): string | null {
-  const L = letter.toUpperCase()
+/** Clave de volumen de una raíz que devolvió volumeRoot. */
+export function volumeKey(root: string, platform: Platform = process.platform): string {
+  return platform === 'darwin' ? root : root[0].toUpperCase()
+}
+
+const sameVolume = (a: string, b: string, platform: Platform) => (platform === 'darwin' ? a === b : a.toUpperCase() === b.toUpperCase())
+
+/** Devuelve la raíz solo si el volumen pertenece a un USB que ya tiene PoxiISO. Cualquier otra unidad (C:, discos duros...) es null. */
+export function resolveVentoyRoot(disks: UsbDisk[], key: string, platform: Platform = process.platform): string | null {
+  const root = volumeRoot(key, platform)
+  if (!root) return null
+  return disks.some(x => x.hasVentoy && x.letters.some(l => sameVolume(l, key, platform))) ? root : null
+}
+
+/** Sistema de archivos del volumen en un USB con PoxiISO (exFAT, NTFS, FAT32…), o null si no se sabe. */
+export function fileSystemOf(disks: UsbDisk[], key: string, platform: Platform = process.platform): string | null {
   for (const d of disks) {
-    const i = d.letters.findIndex(l => l.toUpperCase() === L)
+    const i = d.letters.findIndex(l => sameVolume(l, key, platform))
     if (i >= 0) return d.fileSystems?.[i] || null
   }
   return null
@@ -54,12 +71,12 @@ const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
  * y 30 intentos así dejaban la app parada minutos en el 100 %.
  */
 export async function waitForDataRoot(
-  phyDrive: number, list: () => Promise<UsbDisk[]> = listUsb, wait: (ms: number) => Promise<void> = sleep, tries = 30, maxMs = 45_000,
+  phyDrive: number, list: () => Promise<UsbDisk[]> = listUsb, wait: (ms: number) => Promise<void> = sleep, tries = 30, maxMs = 45_000, platform: Platform = process.platform,
 ): Promise<string | null> {
   const end = Date.now() + maxMs
   for (let i = 0; i < tries && Date.now() < end; i++) {
     const d = (await list().catch(() => [] as UsbDisk[])).find(x => x.number === phyDrive)
-    if (d?.hasVentoy && d.letters[0]) return `${d.letters[0].toUpperCase()}:\\`
+    if (d?.hasVentoy && d.letters[0]) return volumeRoot(d.letters[0], platform)
     await wait(500)
   }
   return null

@@ -25,7 +25,7 @@ async function bootOpen() {
 
 const usbLabel = (letter: string | null) => {
   const d = bootSt.disks.find(x => x.letters[0] === letter)
-  return d ? `${d.name} (${letter}:)` : `${letter}:`
+  return d ? `${d.name} (${volName(letter)})` : volName(letter)
 }
 
 /** Tarjeta para abrir la vista previa del menú con las ISOs del USB elegido. */
@@ -34,7 +34,7 @@ function previewCard(letter: string | null) {
   return h('div', { class: 'card pv-card' },
     tile(DISC_ICON, 'soft'),
     h('div', { class: 'meta' }, h('b', {}, t('boot.pvTitle')), h('div', { class: 'detail' }, t('boot.pvCard'))),
-    h('button', { class: 'btn ghost small', type: 'button', onclick: () => void openBootPreview(letter, d ? `${d.name} (${letter}:)` : null) }, t('boot.pvOpen')))
+    h('button', { class: 'btn ghost small', type: 'button', onclick: () => void openBootPreview(letter, d ? `${d.name} (${volName(letter)})` : null) }, t('boot.pvOpen')))
 }
 
 function paintBoot(dyn: HTMLElement) {

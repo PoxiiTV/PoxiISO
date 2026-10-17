@@ -93,7 +93,7 @@ function paintDownloadTab(dyn: HTMLElement) {
     return
   }
   const usb = isoSt.disks.find(d => d.letters[0] === isoSt.letter)
-  dyn.append(h('p', { class: 'dl-dest' }, usb ? t('dl.toUsb', { usb: `${usb.name} (${isoSt.letter}:)` }) : t('dl.toPc', { dir: dl.dir })))
+  dyn.append(h('p', { class: 'dl-dest' }, usb ? t('dl.toUsb', { usb: `${usb.name} (${volName(isoSt.letter)})` }) : t('dl.toPc', { dir: dl.dir })))
   if (dl.msg) dyn.append(h('div', { class: `msg ${dl.msg.kind}`, role: dl.msg.kind === 'err' ? 'alert' : 'status' },
     dl.msg.text, dl.msg.folder ? h('button', { class: 'btn small ghost', type: 'button', onclick: () => poxi.dlOpenFolder() }, t('dl.openFolder')) : null))
   if (dl.busy) dyn.append(dlProgressCard())

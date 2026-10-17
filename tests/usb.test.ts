@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { fileSystemOf, parseDisks, waitForDataRoot } from '../src/main/usb'
+import { fileSystemOf, parseDisks, resolveVentoyRoot, volumeKey, volumeRoot, waitForDataRoot } from '../src/main/usb'
 
 const one = { Number: 2, FriendlyName: 'SanDisk Ultra', Size: 32008618496, Letters: ['E'], FileSystems: ['exFAT'], Labels: ['VTOYEFI', 'Ventoy'], DataLabels: ['PoxiISO'] }
 
@@ -68,5 +68,34 @@ describe('fileSystemOf', () => {
   it('null si no se conoce la letra o no hay dato', () => {
     expect(fileSystemOf(disks, 'Z')).toBeNull()
     expect(fileSystemOf([{ ...disks[0], fileSystems: undefined }], 'E')).toBeNull()
+  })
+})
+
+describe('identificador de volumen por plataforma', () => {
+  const win = { number: 2, name: 'USB', sizeBytes: 1, letters: ['E'], hasVentoy: true, fileSystems: ['exFAT'], labels: ['PoxiISO'] }
+  const mac = { ...win, letters: ['/Volumes/PoxiISO'] }
+
+  it('Windows: la letra se convierte en raíz X:\\ y de vuelta', () => {
+    expect(volumeRoot('e', 'win32')).toBe('E:\\')
+    expect(volumeKey('e:\\', 'win32')).toBe('E')
+    for (const k of ['', 'EE', '/Volumes/X', 'E:\\x']) expect(volumeRoot(k, 'win32')).toBeNull()
+  })
+  it('macOS: solo se admite /Volumes/<nombre>, nunca rutas sueltas ni subcarpetas', () => {
+    expect(volumeRoot('/Volumes/PoxiISO', 'darwin')).toBe('/Volumes/PoxiISO')
+    expect(volumeKey('/Volumes/PoxiISO', 'darwin')).toBe('/Volumes/PoxiISO')
+    for (const k of ['E', '/', '/Users/x', '/Volumes', '/Volumes/', '/Volumes/a/b', '/Volumes/..', '/Volumes/a\0b']) expect(volumeRoot(k, 'darwin')).toBeNull()
+  })
+  it('resolveVentoyRoot y fileSystemOf funcionan con claves de macOS', () => {
+    expect(resolveVentoyRoot([mac], '/Volumes/PoxiISO', 'darwin')).toBe('/Volumes/PoxiISO')
+    expect(resolveVentoyRoot([mac], '/Volumes/Otro', 'darwin')).toBeNull()
+    expect(resolveVentoyRoot([{ ...mac, hasVentoy: false }], '/Volumes/PoxiISO', 'darwin')).toBeNull()
+    expect(fileSystemOf([mac], '/Volumes/PoxiISO', 'darwin')).toBe('exFAT')
+  })
+  it('waitForDataRoot devuelve la raíz de macOS tal cual', async () => {
+    expect(await waitForDataRoot(2, async () => [mac], async () => {}, 3, 45_000, 'darwin')).toBe('/Volumes/PoxiISO')
+  })
+  it('en Windows nada cambia', () => {
+    expect(resolveVentoyRoot([win], 'e', 'win32')).toBe('E:\\')
+    expect(fileSystemOf([win], 'E', 'win32')).toBe('exFAT')
   })
 })

@@ -156,7 +156,7 @@ function paintUsbTab(dyn: HTMLElement, root: HTMLElement) {
   const usb = isoSt.disks.find(d => d.letters[0] === isoSt.letter)
   dyn.append(h('div', { class: 'list-h' }, h('b', {}, `${t('isos.list')} (${isoSt.files.length})`),
     h('span', { class: 'list-h-r' },
-      h('button', { class: 'link-btn', type: 'button', onclick: () => void openBootPreview(isoSt.letter, usb ? `${usb.name} (${isoSt.letter}:)` : null) }, t('boot.pvLink')),
+      h('button', { class: 'link-btn', type: 'button', onclick: () => void openBootPreview(isoSt.letter, usb ? `${usb.name} (${volName(isoSt.letter)})` : null) }, t('boot.pvLink')),
       t('isos.free', { size: formatBytes(isoSt.free) }))))
   dyn.append(isoSt.files.length
     ? h('div', { class: 'card list' }, ...isoSt.files.map(isoRow))
